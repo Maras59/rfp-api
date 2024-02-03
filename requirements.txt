@@ -1,2 +1,4 @@
 django
 djangorestframework
+pymilvus==2.3.4
+sentence-transformers
