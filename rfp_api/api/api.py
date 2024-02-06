@@ -5,4 +5,4 @@ class Inference(APIView):
 
     def get(self, request):
         param = request.GET.get('q', '')
-        return JsonResponse({'res' : ["Query Parameter: {param}"]})
+        return JsonResponse({'res' : ["Query Parameter : {param}"]})
