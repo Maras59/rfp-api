@@ -4,7 +4,6 @@ from source.milvus_index import MilvusService
 
 
 class Inference(APIView):
-
     def get(self, request: dict):
         index = MilvusService()
         if param := request.GET.get("q", None):
