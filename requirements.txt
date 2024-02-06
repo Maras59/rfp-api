@@ -1,6 +1,8 @@
 django
 djangorestframework
+psycopg2-binary
+sqlparse
+asgiref
 pymilvus==2.3.4
 sentence-transformers
-psycopg2-binary
 cffi

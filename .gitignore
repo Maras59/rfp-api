@@ -11,6 +11,7 @@ dist
 *.ipynb
 __pycache__
 /rfp_api/api/__pycache__
+/rfp_api/__pycache__
 *.pyc
 .DS_Store
 .vscode
