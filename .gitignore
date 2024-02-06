@@ -1,3 +1,13 @@
+env
+.venv
+venv
+.envrc
+input
+output
+temp
+.idea
+build
+dist
 *.ipynb
 __pycache__
 *.pyc
