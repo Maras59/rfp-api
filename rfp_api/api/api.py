@@ -2,7 +2,7 @@ from collections import defaultdict
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rfp_api.source.db import DatabaseService
-from source.milvus_index import MilvusConnectionSecrets, MilvusService
+from rfp_api.source.milvus_index import MilvusConnectionSecrets, MilvusService
 
 credentials = MilvusConnectionSecrets(user="username", password="password")
 index = MilvusService(credentials)
