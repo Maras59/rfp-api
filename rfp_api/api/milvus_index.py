@@ -9,8 +9,6 @@ from sentence_transformers import SentenceTransformer
 from pymilvus import Collection, CollectionSchema, DataType, FieldSchema, MilvusException, connections
 from retry import retry
 
-from .model import QueryResult
-
 
 @dataclass
 class MilvusConnectionSecrets:
@@ -19,6 +17,12 @@ class MilvusConnectionSecrets:
     alias: Optional[str] = "default"
     host: Optional[str] = "localhost"
     port: Optional[str] = "19530"
+
+
+@dataclass
+class QueryResult:
+    question_id: int
+    score: float
 
 
 def preload_collection(func):

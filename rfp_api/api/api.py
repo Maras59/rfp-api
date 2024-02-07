@@ -2,8 +2,8 @@ from collections import defaultdict
 from django.http import JsonResponse
 import pandas as pd
 from rest_framework.views import APIView
-from rfp_api.source.db import DatabaseService
-from rfp_api.source.milvus_index import MilvusConnectionSecrets, MilvusService
+from .postgre_database import DatabaseService
+from .milvus_index import MilvusConnectionSecrets, MilvusService
 
 db = DatabaseService()
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
