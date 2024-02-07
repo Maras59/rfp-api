@@ -42,7 +42,7 @@ class MilvusService:
 
     def __init__(self, credentials: MilvusConnectionSecrets, df: Optional[pd.DataFrame] = None, verbose: bool = False, reset: bool = False):
         self.embedding_model = SentenceTransformer("all-mpnet-base-v2")
-        connections.connect(**credentials.__dict__)
+        self.connect(credentials)
         self.collection: Collection = self.create_or_get_collection(reset)
         if df is not None:
             self.insert(df)
