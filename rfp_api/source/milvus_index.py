@@ -8,7 +8,7 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 from pymilvus import Collection, CollectionSchema, DataType, FieldSchema, connections
 
-from source.model import QueryResult
+from .model import QueryResult
 
 
 @dataclass
