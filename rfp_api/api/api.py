@@ -49,4 +49,4 @@ class Inference(APIView):
             question = Question.objects.get(answer=answer)
             answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
 
-        return JsonResponse(answers)
+        return JsonResponse(answers, safe=False)
