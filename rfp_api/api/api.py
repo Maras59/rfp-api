@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rfp_api.source.db import DatabaseService
 from rfp_api.source.milvus_index import MilvusConnectionSecrets, MilvusService
 
-credentials = MilvusConnectionSecrets(user="username", password="password")
+credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 index = MilvusService(credentials)
 db = DatabaseService()
 
@@ -32,6 +32,6 @@ class Inference(APIView):
         answers = []
         for question_id, score in question_ids:
             answer = db.get_answer_by_question_id(question_id)
-            answers.append({"answer": answer, "score": score})
+            answers.append({"answer": answer["text"], "score": score})
 
         return JsonResponse({"res": answers})

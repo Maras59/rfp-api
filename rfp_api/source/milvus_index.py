@@ -6,7 +6,8 @@ from typing import List, Optional, Tuple
 
 import pandas as pd
 from sentence_transformers import SentenceTransformer
-from pymilvus import Collection, CollectionSchema, DataType, FieldSchema, connections
+from pymilvus import Collection, CollectionSchema, DataType, FieldSchema, MilvusException, connections
+from retry import retry
 
 from .model import QueryResult
 
@@ -31,7 +32,7 @@ def preload_collection(func):
 
 class MilvusService:
     index_params = {"metric_type": "COSINE", "index_type": "FLAT"}
-    search_params = {
+    search_params = { 
         "metric_type": "COSINE",
         "offset": 0,
         "ignore_growing": False,
@@ -47,6 +48,10 @@ class MilvusService:
             self.insert(df)
         self.create_index()
         self.verbose = verbose
+
+    @retry(MilvusException, tries=10, delay=30, logger=None)
+    def connect(self, credentials: MilvusConnectionSecrets):
+        connections.connect(**credentials.__dict__)
 
     def create_or_get_collection(self, reset: bool) -> Collection:
         with suppress(Exception):
