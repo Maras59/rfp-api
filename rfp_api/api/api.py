@@ -3,15 +3,22 @@ from django.http import JsonResponse
 import pandas as pd
 from rest_framework.views import APIView
 from .milvus_index import MilvusConnectionSecrets, MilvusService
-from rfp_api.models import Answer, Question
+from rfp_api.models import Answer, Question, Organization
 
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 index = MilvusService(credentials, reset=True)
 
 # temp insert
 df = pd.read_csv("qa-pairs.csv")
-df["id"] = df.index
 df["text"] = df["question"]
+rows = []
+org = Organization.objects.create(name="default")
+for row in df.to_dict(orient="records"):
+    answer = Answer.objects.create(text=row["answer"], owner_organization=org)
+    question = Question.objects.create(text=row["text"], answer=answer)
+    row["id"] = question.id
+    rows.append(row)
+df = pd.DataFrame(rows)
 index.insert(df)
 
 
@@ -39,6 +46,7 @@ class Inference(APIView):
         answers = []
         for question_id, score in question_ids:
             answer = Answer.objects.get(id=question_id)
-            answers.append({"answer": answer.text, "score": score})
+            question = Question.objects.get(answer=answer)
+            answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
 
-        return JsonResponse({"res": answers})
+        return JsonResponse(answers)
