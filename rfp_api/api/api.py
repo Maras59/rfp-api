@@ -2,10 +2,9 @@ from collections import defaultdict
 from django.http import JsonResponse
 import pandas as pd
 from rest_framework.views import APIView
-from .postgre_database import DatabaseService
 from .milvus_index import MilvusConnectionSecrets, MilvusService
+from rfp_api.models import Answer, Question
 
-db = DatabaseService()
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 index = MilvusService(credentials, reset=True)
 
@@ -29,9 +28,9 @@ class Inference(APIView):
         # get nearest neighbor
         classes = defaultdict(int)
         for item in query_results:
-            question = db.get_question_by_id(item.question_id)
+            question = Question.objects.get(id=item.question_id)
             score = 1 - item.score
-            classes[question["answer_id"]] += score
+            classes[question.answer.id] += score
 
         # create list of tuples (score, class) and sort it
         sorted_classes = sorted(classes.items(), key=lambda x: x[1], reverse=True)
@@ -39,7 +38,7 @@ class Inference(APIView):
 
         answers = []
         for question_id, score in question_ids:
-            answer = db.get_answer_by_question_id(question_id)
-            answers.append({"answer": answer["text"], "score": score})
+            answer = Answer.objects.get(id=question_id)
+            answers.append({"answer": answer.text, "score": score})
 
         return JsonResponse({"res": answers})
