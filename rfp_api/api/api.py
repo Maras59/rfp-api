@@ -26,13 +26,13 @@ index.insert(df)
 
 
 class Inference(APIView):
-    def get(self, request) -> JsonResponse:
+    def post(self, request) -> JsonResponse:
         payload = request.data
         if not (question := payload.get("question")):
             return JsonResponse({"res": "No question found in the payload"})
 
-        return_count = int(request.GET.get("count", 2))
-        threshold = float(request.GET.get("threshold", 0.5))
+        return_count = int(payload.get("count", 2))
+        threshold = float(payload.get("threshold", 0.4))
 
         query_results = index.search(question, k=10, threshold=threshold)
 
