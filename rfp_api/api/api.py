@@ -1,9 +1,12 @@
 from collections import defaultdict
-from django.http import JsonResponse
+
 import pandas as pd
+from django.http import JsonResponse
 from rest_framework.views import APIView
+
+from rfp_api.models import Answer, Organization, Question
+
 from .milvus_index import MilvusConnectionSecrets, MilvusService
-from rfp_api.models import Answer, Question, Organization
 
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 index = MilvusService(credentials, reset=True)
@@ -26,12 +29,12 @@ class Inference(APIView):
     def get(self, request: dict) -> JsonResponse:
         if request.GET.get("q") is None:
             return JsonResponse({"res": "No query parameter found"})
-        
+
         return_count = int(request.GET.get("count", 2))
         threshold = float(request.GET.get("threshold", 0.5))
 
         query_results = index.search(request.GET.get("q", None), k=10, threshold=threshold)
-        
+
         # get nearest neighbor
         classes = defaultdict(int)
         for item in query_results:

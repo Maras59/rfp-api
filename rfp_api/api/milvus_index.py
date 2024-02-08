@@ -5,9 +5,9 @@ from functools import wraps
 from typing import List, Optional, Tuple
 
 import pandas as pd
-from sentence_transformers import SentenceTransformer
 from pymilvus import Collection, CollectionSchema, DataType, FieldSchema, MilvusException, connections
 from retry import retry
+from sentence_transformers import SentenceTransformer
 
 
 @dataclass
@@ -36,7 +36,7 @@ def preload_collection(func):
 
 class MilvusService:
     index_params = {"metric_type": "COSINE", "index_type": "FLAT"}
-    search_params = { 
+    search_params = {
         "metric_type": "COSINE",
         "offset": 0,
         "ignore_growing": False,
@@ -44,7 +44,13 @@ class MilvusService:
     collection_name = "questions"
     index_name = "questions_embedding"
 
-    def __init__(self, credentials: MilvusConnectionSecrets, df: Optional[pd.DataFrame] = None, verbose: bool = False, reset: bool = False):
+    def __init__(
+        self,
+        credentials: MilvusConnectionSecrets,
+        df: Optional[pd.DataFrame] = None,
+        verbose: bool = False,
+        reset: bool = False,
+    ):
         self.embedding_model = SentenceTransformer("all-mpnet-base-v2")
         self.connect(credentials)
         self.collection: Collection = self.create_or_get_collection(reset)
@@ -130,6 +136,6 @@ class MilvusService:
 
     def __sizeof__(self) -> int:
         return self.collection.num_entities
-    
+
     def __len__(self) -> int:
         return self.__sizeof__()
