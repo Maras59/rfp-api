@@ -40,7 +40,7 @@ class Inference(APIView):
         for item in query_results:
             question = Question.objects.get(id=item.question_id)
             score = 1 - item.score
-            classes[question.answer.id] += score
+            classes[question.answer.id] += item.score
 
         # create list of tuples (score, class) and sort it
         sorted_classes = sorted(classes.items(), key=lambda x: x[1], reverse=True)
