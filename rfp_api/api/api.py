@@ -26,14 +26,15 @@ index.insert(df)
 
 
 class Inference(APIView):
-    def get(self, request: dict) -> JsonResponse:
-        if request.GET.get("q") is None:
-            return JsonResponse({"res": "No query parameter found"})
+    def get(self, request) -> JsonResponse:
+        payload = request.data
+        if not (question := payload.get("question")):
+            return JsonResponse({"res": "No question found in the payload"})
 
         return_count = int(request.GET.get("count", 2))
         threshold = float(request.GET.get("threshold", 0.5))
 
-        query_results = index.search(request.GET.get("q", None), k=10, threshold=threshold)
+        query_results = index.search(question, k=10, threshold=threshold)
 
         # get nearest neighbor
         classes = defaultdict(int)
