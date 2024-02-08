@@ -39,7 +39,6 @@ class Inference(APIView):
         classes = defaultdict(int)
         for item in query_results:
             question = Question.objects.get(id=item.question_id)
-            score = 1 - item.score
             classes[question.answer.id] += item.score
 
         # create list of tuples (score, class) and sort it
