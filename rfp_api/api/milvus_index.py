@@ -91,7 +91,7 @@ class MilvusService:
         self.collection.insert(df)
 
     @preload_collection
-    def search(self, query: str, k: Optional[int] = 10, threshold: float = float("inf")) -> List[QueryResult]:
+    def search(self, query: str, k: Optional[int] = 10, threshold: float = -1 * float("inf")) -> List[QueryResult]:
         # if k > len(self):
         #     raise ValueError(f"Your index has size {len(self)} but you set n_results to {k}.")
 
@@ -102,7 +102,7 @@ class MilvusService:
         results = []
         for result in query_results[0]:
             item = QueryResult(question_id=result.id, score=result.distance)
-            if item.score > threshold:
+            if item.score < threshold:
                 continue
             results.append(item)
 
