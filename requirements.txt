@@ -3,7 +3,7 @@ djangorestframework
 psycopg2-binary
 sqlparse
 asgiref
-pymilvus==2.3.4
+pymilvus==2.3.6
 sentence-transformers
 cffi
 retry
