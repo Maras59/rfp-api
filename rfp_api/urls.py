@@ -20,4 +20,4 @@ from django.urls import path
 
 from rfp_api.api import api
 
-urlpatterns = [path("admin/", admin.site.urls), path("inference/", api.Inference.as_view())]
+urlpatterns = [path("admin/", admin.site.urls), path("inference/", api.Inference.as_view()), path("init/", api.Init.as_view())]
