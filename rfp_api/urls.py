@@ -19,5 +19,11 @@ from django.contrib import admin
 from django.urls import path
 
 from rfp_api.api import api
+from rfp_api.api.views import listAnswersPageView
 
-urlpatterns = [path("admin/", admin.site.urls), path("inference/", api.Inference.as_view()), path("init/", api.Init.as_view())]
+urlpatterns = [
+    path("admin/", admin.site.urls), 
+    path("inference/", api.Inference.as_view()), 
+    path("init/", api.Init.as_view()),
+    path("listanswers/", listAnswersPageView, name="answers")
+]
