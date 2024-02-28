@@ -1,6 +1,8 @@
 from collections import defaultdict
 
 import pandas as pd
+from django.db.models.signals import post_save, pre_delete, pre_save
+from django.dispatch import receiver
 from django.http import JsonResponse
 from rest_framework.views import APIView
 
@@ -9,7 +11,24 @@ from rfp_api.models import Answer, Organization, Question
 from .milvus_index import MilvusConnectionSecrets, MilvusService
 
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
-index = MilvusService(credentials, reset=True)
+index = MilvusService(credentials)
+
+
+@receiver(pre_delete, sender=Question)
+def on_question_delete(sender, instance, **kwargs):
+    index.drop_question(instance.id)
+
+
+@receiver(pre_save, sender=Question)
+def on_question_update(sender, instance, **kwargs):
+    if instance.pk and not instance._state.adding:  # If the primary key exists and not adding a new instance
+        index.update_question(instance.id, instance.text)
+
+
+@receiver(post_save, sender=Question)
+def on_question_insert(sender, instance, created, **kwargs):
+    if created:
+        index.insert_question(instance.id, instance.text)
 
 
 class Inference(APIView):
