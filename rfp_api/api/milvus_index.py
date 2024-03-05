@@ -106,9 +106,6 @@ class MilvusService:
                 continue
             results.append(item)
 
-        if self.verbose:
-            self.print_results(results)
-
         return results
 
     def nearest_neighbors(self, results: List[QueryResult]) -> List[Tuple[int, float]]:
@@ -133,6 +130,17 @@ class MilvusService:
         relevant_answers = self.nearest_neighbors(results)
         top_answers = relevant_answers[:return_count]
         return top_answers
+
+    def drop_question(self, question_id: int) -> None:
+        expr = f"id in [{question_id}]"
+        self.collection.delete(expr)
+
+    def update_question(self, question_id: int, text: str) -> None:
+        self.drop_question(question_id)
+        self.insert(pd.DataFrame({"id": [question_id], "text": [text]}))
+
+    def insert_question(self, question_id: int, text: str) -> None:
+        self.insert(pd.DataFrame({"id": [question_id], "text": [text]}))
 
     def __sizeof__(self) -> int:
         return self.collection.num_entities
