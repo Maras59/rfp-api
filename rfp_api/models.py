@@ -1,6 +1,7 @@
 from django.db import models
+from django.template.defaultfilters import truncatechars
 
-
+CHAR_LENGTH = 50
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -25,7 +26,11 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.text}"
+        return truncatechars(self.text, CHAR_LENGTH) + f' | ANSWER ID: {str(self.id)}'
+
+    @property
+    def short_description(self):
+        return truncatechars(self.text, 35)
 
 class Question(models.Model):
     text = models.TextField()
@@ -34,4 +39,8 @@ class Question(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.text}, {self.answer}"
+        return truncatechars(self.text, CHAR_LENGTH) + f' | QUESTION ID: {str(self.id)}'
+
+    @property
+    def short_description(self):
+        return truncatechars(self.text, 35)
