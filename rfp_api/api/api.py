@@ -1,4 +1,5 @@
 from collections import defaultdict
+from pathlib import Path
 
 import pandas as pd
 from django.db.models.signals import post_save, pre_delete, pre_save
@@ -75,3 +76,22 @@ class Init(APIView):
         df = pd.DataFrame(rows)
         index.insert(df)
         return JsonResponse({"res": "API is running"})
+
+from django.http import HttpResponse
+
+class DownloadQuestionsCSV(APIView):
+    def get(self, request) -> HttpResponse:
+        # Retrieve all questions from the database
+        questions = Question.objects.all().values_list('id', 'text')
+
+        # Create a DataFrame from the questions
+        df = pd.DataFrame(list(questions), columns=['id', 'question'])
+
+        # Convert the DataFrame to a CSV
+        csv_content = df.to_csv(index=False)
+
+        # Create the HttpResponse object with the appropriate CSV header.
+        response = HttpResponse(csv_content, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="questions.csv"'
+
+        return response
