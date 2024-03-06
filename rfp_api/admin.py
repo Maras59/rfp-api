@@ -6,6 +6,13 @@ from django.http import HttpResponse
 from django.contrib import admin
 
 # Register your models here.
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('text', 'id')
+    readonly_fields = ('id',)
+
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('text', 'id')
+    readonly_fields = ('id',)
 
 def export_to_csv(modeladmin, request, queryset):
     meta = modeladmin.model._meta
@@ -29,5 +36,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
 admin.site.register(Organization)
 admin.site.register(User)
+admin.site.register(Answer, AnswerAdmin)
+admin.site.register(Question, QuestionAdmin)
 admin.site.register(Answer)
 admin.site.register(Question, QuestionAdmin)
