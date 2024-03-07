@@ -48,7 +48,7 @@ services:
     image: milvusdb/milvus:v2.3.8
     command: ["milvus", "run", "standalone"]
     security_opt:
-    - seccomp:unconfined
+      - seccomp:unconfined
     environment:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
@@ -66,7 +66,16 @@ services:
     depends_on:
       - "etcd"
       - "minio"
-  
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - 11434:11434
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: always
+
   web:
     container_name: django-web
     build: .
@@ -78,6 +87,7 @@ services:
     depends_on:
       - "db"
       - "standalone"
+      - "ollama"
 
 networks:
   default:

@@ -7,3 +7,5 @@ pymilvus==2.3.6
 sentence-transformers
 cffi
 retry
+ollama
+

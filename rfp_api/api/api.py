@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+import ollama
 import pandas as pd
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
@@ -12,6 +13,8 @@ from .milvus_index import MilvusConnectionSecrets, MilvusService
 
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 index = MilvusService(credentials)
+llm = ollama.Client("http://ollama:11434")
+llm.pull("gemma:2b")
 
 
 @receiver(pre_delete, sender=Question)
@@ -34,13 +37,14 @@ def on_question_insert(sender, instance, created, **kwargs):
 class Inference(APIView):
     def post(self, request) -> JsonResponse:
         payload = request.data
-        if not (question := payload.get("question")):
+        if not (user_question := payload.get("question")):
             return JsonResponse({"res": "No question found in the payload"})
 
         return_count = int(payload.get("count", 2))
         threshold = float(payload.get("threshold", 0.4))
+        use_llm_synthesis = payload.get("use_llm_synthesis", False)
 
-        query_results = index.search(question, k=10, threshold=threshold)
+        query_results = index.search(user_question, k=10, threshold=threshold)
 
         # get nearest neighbor
         classes = defaultdict(int)
@@ -50,15 +54,50 @@ class Inference(APIView):
 
         # create list of tuples (score, class) and sort it
         sorted_classes = sorted(classes.items(), key=lambda x: x[1], reverse=True)
-        question_ids = sorted_classes[:return_count]
+        answer_ids = sorted_classes[:return_count]
 
         answers = []
-        for question_id, score in question_ids:
-            answer = Answer.objects.get(id=question_id)
+        for answer_id, score in answer_ids:
+            answer = Answer.objects.get(id=answer_id)
             question = Question.objects.get(answer=answer)
-            answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
+            answers.append(
+                {"similar_question": question.text, "answer": answer.text, "score": score, "answer_id": answer_id}
+            )
 
-        return JsonResponse(answers, safe=False)
+        if use_llm_synthesis:
+            answers_string = " --- ".join(map(lambda x: x["answer"], answers))
+            prompt = """You will be provided a number of possible answers to the given question separated by "---" as context. Using the given context, answer the question at the end. When you use an answer, retain as many details from that answer as necessary.
+
+<Examples>
+
+Example Possible Answers 1: 10,432 employees in the system, but only 543 are ready for a new project at this time.
+Example Question 1: How many active employees do you have?
+Example Answer 1: We have 10,432 employees in our system with 543 ready for a new project.
+
+Example Possible Answers 2: We give our employees 100 days of vacation per year to ensure they are focused during work. --- We train our employees daily on locking their computer.
+Example Question 2: What are your security protocols?
+Example Answer 2: We train our employees daily on security protocols. Our security protocols include providing 100 days of vacation per employee to ensure they are focused.
+
+Example Possible Answers 3: Red
+Example Question 3: What is Partner Personnel's logo color?
+Example Answer 3: Partner Personnel's logo color is red.
+
+<Actual>
+
+Possible Answers: {answers_context}
+Question: "{question}"
+Answer:""".format(
+                answers_context=answers_string, question=user_question
+            )
+            print(prompt)
+            response = llm.chat(model="gemma:2b", messages=[{"role": "user", "content": prompt}])
+            answer = response["message"]["content"]
+        else:
+            answer = answers[0]["answer"]
+
+        response = {"possible_answers": answers, "question": user_question, "answer": answer}
+
+        return JsonResponse(response, safe=False)
 
 
 class Init(APIView):
