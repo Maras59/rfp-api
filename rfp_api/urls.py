@@ -23,12 +23,12 @@ from rfp_api.api.views import *
 
 urlpatterns = [
     path("", indexPageView, name="index"),
-    path("admin/", admin.site.urls), 
-    path("inference/", api.Inference.as_view()), 
+    path("admin/", admin.site.urls),
+    path("inference/", api.Inference.as_view()),
     path("init/", api.Init.as_view()),
     path("answerList/", listAnswersPageView, name="answers"),
     path("questionList/", listQuestionsPageView, name="questions"),
     path("addQuestion/", addQuestionPageView, name="questions"),
-    path("editQuestion/<int:iQuestionID", editQuestionPageView, name="editQuestion"),
-    path("deleteQuestion/<int:iQuestionID", deleteQuestionPageView, name="deleteQuestion")
+    # path("editQuestion/<int:iQuestionID", editQuestionPageView, name="editQuestion"),
+    # path("deleteQuestion/<int:iQuestionID", deleteQuestionPageView, name="deleteQuestion"),
 ]
