@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+import numpy as np
 import pandas as pd
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
@@ -64,12 +65,19 @@ class Inference(APIView):
 class Init(APIView):
     def get(self, request) -> JsonResponse:
         df = pd.read_csv("qa-pairs.csv")
+        df.fillna("np.nan", inplace=True)
+        df.replace("np.nan", None, inplace=True)
         df["text"] = df["question"]
         rows = []
         org = Organization.objects.create(name="default")
         for row in df.to_dict(orient="records"):
-            answer = Answer.objects.create(text=row["answer"], owner_organization=org)
-            question = Question.objects.create(text=row["text"], answer=answer)
+            answer = row['answer']
+
+            if not answer or type(answer) == float:
+                question = Question.objects.create(text=row["text"])
+            else:
+                answer = Answer.objects.create(text=row["answer"], owner_organization=org)
+                question = Question.objects.create(text=row['text'], answer=answer)
             row["id"] = question.id
             rows.append(row)
         df = pd.DataFrame(rows)
