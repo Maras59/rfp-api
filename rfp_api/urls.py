@@ -19,9 +19,16 @@ from django.contrib import admin
 from django.urls import path
 
 from rfp_api.api import api
+from rfp_api.api.views import *
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("inference/", api.Inference.as_view()),
+    path("", indexPageView, name="index"),
+    path("admin/", admin.site.urls), 
+    path("inference/", api.Inference.as_view()), 
     path("init/", api.Init.as_view()),
+    path("answerList/", listAnswersPageView, name="answers"),
+    path("questionList/", listQuestionsPageView, name="questions"),
+    path("addQuestion/", addQuestionPageView, name="questions"),
+    path("editQuestion/<int:iQuestionID", editQuestionPageView, name="editQuestion"),
+    path("deleteQuestion/<int:iQuestionID", deleteQuestionPageView, name="deleteQuestion")
 ]
