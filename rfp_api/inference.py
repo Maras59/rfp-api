@@ -6,9 +6,9 @@ from django.dispatch import receiver
 from django.http import JsonResponse
 from rest_framework.views import APIView
 
-from rfp_api.models import Answer, Organization, Question
+from source.milvus_index import MilvusConnectionSecrets, MilvusService
 
-from .milvus_index import MilvusConnectionSecrets, MilvusService
+from .models import Answer, Organization, Question
 
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 index = MilvusService(credentials)

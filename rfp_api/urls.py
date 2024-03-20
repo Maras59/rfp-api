@@ -18,17 +18,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-import rfp_api.inference as api
-import rfp_api.views as views
+from .inference import Inference, Init
+from .views import addQuestionPageView, index_page_view, list_answers_page_view, list_questions_page_view
 
 urlpatterns = [
-    path("", views.index_page_view, name="index"),
+    path("", index_page_view, name="index"),
     path("admin/", admin.site.urls),
-    path("inference/", api.Inference.as_view()),
-    path("init/", api.Init.as_view()),
-    path("answerList/", views.list_answers_page_view, name="answers"),
-    path("questionList/", views.list_questions_page_view, name="questions"),
-    path("addQuestion/", views.addQuestionPageView, name="questions"),
+    path("inference/", Inference.as_view()),
+    path("init/", Init.as_view()),
+    path("answerList/", list_answers_page_view, name="answers"),
+    path("questionList/", list_questions_page_view, name="questions"),
+    path("addQuestion/", addQuestionPageView, name="questions"),
     # path("editQuestion/<int:iQuestionID", editQuestionPageView, name="editQuestion"),
     # path("deleteQuestion/<int:iQuestionID", deleteQuestionPageView, name="deleteQuestion"),
 ]
