@@ -1,7 +1,3 @@
-"""
-To run the dashboard, use the following command in the terminal:
-`streamlit run app.py`
-"""
 import requests
 import streamlit as st
 
@@ -17,13 +13,14 @@ def add_assistant_message(text: str):
     st.session_state.messages.append({"role": "assistant", "content": text})
 
 
-url = "http://localhost:8000/inference/"
+url = "http://django-web:8000/inference/"
 
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
     payload = {"question": prompt}
     response = requests.post(url, json=payload)
+    response.raise_for_status()
     answers = response.json()
     if not answers:
         message = "I'm sorry, I don't have an answer to that question."

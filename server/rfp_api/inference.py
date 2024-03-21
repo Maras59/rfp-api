@@ -6,7 +6,6 @@ from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django.http import JsonResponse
 from rest_framework.views import APIView
-
 from source.milvus_index import MilvusConnectionSecrets, MilvusService
 
 from .models import Answer, Organization, Question

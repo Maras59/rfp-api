@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from .inference import Inference
 from .views import ListAnswersView, ListQuestionsView, index_page_view
 
 urlpatterns = [
@@ -25,4 +26,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("answerList/", ListAnswersView.as_view(), name="answers"),
     path("questionList/", ListQuestionsView.as_view(), name="questions"),
+    path("inference/", Inference.as_view(), name="inference"),
 ]
