@@ -30,7 +30,7 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{str(self.id)} | ' + truncatechars(self.text, CHAR_LENGTH)
+        return f"{str(self.id)} | " + truncatechars(self.text, CHAR_LENGTH)
 
     @property
     def short_description(self):
@@ -44,7 +44,7 @@ class Question(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{str(self.id)} | ' + truncatechars(self.text, CHAR_LENGTH)
+        return f"{str(self.id)} | " + truncatechars(self.text, CHAR_LENGTH)
 
     @property
     def short_description(self):

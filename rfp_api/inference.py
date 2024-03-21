@@ -71,13 +71,13 @@ class Init(APIView):
         rows = []
         org = Organization.objects.create(name="default")
         for row in df.to_dict(orient="records"):
-            answer = row['answer']
+            answer = row["answer"]
 
             if not answer or type(answer) == float:
                 question = Question.objects.create(text=row["text"])
             else:
                 answer = Answer.objects.create(text=row["answer"], owner_organization=org)
-                question = Question.objects.create(text=row['text'], answer=answer)
+                question = Question.objects.create(text=row["text"], answer=answer)
             row["id"] = question.id
             rows.append(row)
         df = pd.DataFrame(rows)
