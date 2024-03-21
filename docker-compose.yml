@@ -69,15 +69,26 @@ services:
   
   web:
     container_name: django-web
-    build: .
+    build: ./server/.
     command: python /code/manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./server:/code
     ports:
       - 8000:8000
     depends_on:
       - "db"
       - "standalone"
+  
+  client:
+    container_name: streamlit-client
+    build: ./client/.
+    command: streamlit run /code/app.py --server.port=8501 --server.address=0.0.0.0
+    volumes:
+      - ./client:/code
+    ports:
+      - 8501:8501
+    depends_on:
+      - "web"
 
 networks:
   default:

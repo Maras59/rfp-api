@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Answer, Organization, Question, User
+from .models import Answer, Organization, Question
 
 
 # Register your models here.
@@ -19,8 +19,3 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ("name", "description")
-
-
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ("last_name", "first_name")

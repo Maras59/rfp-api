@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Questions</title>
+</head>
+<style>
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+    }
+    table, th, td {
+        border: 1px solid black;
+    }
+    body {
+        font-family: Helvetica, Arial, Sans-Serif;
+    }
+</style>
+<body>
+    <h2 style="text-align:center">Questions List</h2>
+
+    <table style="width:100%">
+    <tr>
+        <th style="width:5%"><strong>ID</strong></th>
+        <th style="width:70%"><strong>Question Text</strong></th>
+        <th style="text-align:left"><strong>Links</strong></th>
+    </tr>
+    {% for question in questions %}
+    <tr>
+        <td style="text-align:center">{{question.id}}</td>
+        <td>{{question.text}}</td>
+        <td>
+            <a href="http://localhost:8000/admin/rfp_api/question/{{ question.id }}">Edit in Admin</a>
+            <br>
+            <a href="http://localhost:8000/admin/rfp_api/answer/{{ question.answer.id }}">View Answer in Admin</a>
+            <br>
+            <a href="http://localhost:8000/questionList/?q={{ question.answer.id }}">View Similar Questions</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

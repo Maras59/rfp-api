@@ -18,17 +18,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from rfp_api.api import api
-from rfp_api.api.views import *
+from .inference import Inference
+from .views import CSVUploadView, ListAnswersView, ListQuestionsView, index_page_view
 
 urlpatterns = [
-    path("", indexPageView, name="index"),
+    path("", index_page_view, name="index"),
     path("admin/", admin.site.urls),
-    path("inference/", api.Inference.as_view()),
-    path("init/", api.Init.as_view()),
-    path("answerList/", listAnswersPageView, name="answers"),
-    path("questionList/", listQuestionsPageView, name="questions"),
-    path("addQuestion/", addQuestionPageView, name="questions"),
-    # path("editQuestion/<int:iQuestionID", editQuestionPageView, name="editQuestion"),
-    # path("deleteQuestion/<int:iQuestionID", deleteQuestionPageView, name="deleteQuestion"),
+    path("answerList/", ListAnswersView.as_view(), name="answers"),
+    path("questionList/", ListQuestionsView.as_view(), name="questions"),
+    path("inference/", Inference.as_view(), name="inference"),
+    path("uploadCsv/", CSVUploadView.as_view(), name="upload-csv"),
 ]

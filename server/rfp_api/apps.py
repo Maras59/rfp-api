@@ -6,6 +6,6 @@ class RfpApiConfig(AppConfig):
     name = "rfp_api"
 
     def ready(self):
-        import rfp_api.api.signals  # noqa
+        # import rfp_api.signals  # noqa
 
         return super().ready()
