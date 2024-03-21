@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 
-from ..models import Answer, Question
+from .models import Answer, Question
 
 
 # TODO: Get context for pages
@@ -9,7 +9,7 @@ from ..models import Answer, Question
 # Answers page -> add links, view this answers questions and view this answer
 #                 view answer -> admin page entry,
 #                 view questions -> render questions page with context of only questions that are annswer by this question
-def indexPageView(request):
+def index_page_view(request):
     return render(request, "index.html")
 
 
