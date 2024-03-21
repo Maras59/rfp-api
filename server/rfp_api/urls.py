@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path
 
 from .inference import Inference
-from .views import ListAnswersView, ListQuestionsView, index_page_view
+from .views import CSVUploadView, ListAnswersView, ListQuestionsView, index_page_view
 
 urlpatterns = [
     path("", index_page_view, name="index"),
@@ -27,4 +27,5 @@ urlpatterns = [
     path("answerList/", ListAnswersView.as_view(), name="answers"),
     path("questionList/", ListQuestionsView.as_view(), name="questions"),
     path("inference/", Inference.as_view(), name="inference"),
+    path("uploadCsv/", CSVUploadView.as_view(), name="upload-csv"),
 ]

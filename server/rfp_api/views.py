@@ -1,7 +1,12 @@
+import csv
+from io import TextIOWrapper
+
 from django.shortcuts import render
+from django.views import View
 from rest_framework.views import APIView
 
-from .models import Answer, Question
+from .forms import UploadCSVForm
+from .models import Answer, Question, Organization
 
 
 # TODO: Get context for pages
@@ -30,3 +35,25 @@ class ListQuestionsView(APIView):
             data = Question.objects.all()
         context = {"questions": data}
         return render(request, "questionList.html", context)
+
+
+class CSVUploadView(View):
+    def get(self, request):
+        form = UploadCSVForm()
+        return render(request, "upload.html", {"form": form})
+
+    def post(self, request):
+        form = UploadCSVForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = TextIOWrapper(request.FILES["csv_file"].file, encoding="utf-8")
+            reader = csv.DictReader(csv_file)
+            organization = Organization.objects.get(id=request.POST["organization"])
+            for row in reader:
+                question_text = row["question"]
+                answer_text = row["answer"]
+                print(f"question: {question_text}, answer: {answer_text}")
+                answer = Answer.objects.create(text=answer_text, owner_organization=organization)
+                Question.objects.create(text=question_text, answer=answer)
+            return render(request, "upload.html", {"form": form, "message": "CSV file has been uploaded"})
+        else:
+            return render(request, "upload.html", {"form": form})
