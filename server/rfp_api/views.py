@@ -39,6 +39,8 @@ class ListQuestionsView(APIView):
 
 class CSVUploadView(View):
     def get(self, request):
+        if not Organization.objects.exists():
+            Organization.objects.create(name="Default Organization")
         form = UploadCSVForm()
         return render(request, "upload.html", {"form": form})
 

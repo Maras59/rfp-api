@@ -3,6 +3,9 @@ from .models import Organization
 
 
 class UploadCSVForm(forms.Form):
-    organization_choices = Organization.objects.all().values_list('id', 'name')
-    organization = forms.ChoiceField(choices=organization_choices)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['organization'].choices = Organization.objects.all().values_list('id', 'name')
+    
+    organization = forms.ChoiceField(choices=[])
     csv_file = forms.FileField()
