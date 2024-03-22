@@ -2,7 +2,7 @@ from collections import defaultdict
 from contextlib import suppress
 from dataclasses import dataclass
 from functools import wraps
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 import pandas as pd
 from pymilvus import Collection, CollectionSchema, DataType, FieldSchema, MilvusException, connections
@@ -141,6 +141,11 @@ class MilvusService:
 
     def insert_question(self, question_id: int, text: str) -> None:
         self.insert(pd.DataFrame({"id": [question_id], "text": [text]}))
+
+    def get_id_set(self) -> Set[int]:
+        result = self.collection.query(expr="id >= 0")
+        result = map(lambda x: x["id"], result)
+        return set(result)
 
     def __sizeof__(self) -> int:
         return self.collection.num_entities
