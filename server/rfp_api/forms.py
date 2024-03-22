@@ -10,3 +10,6 @@ class UploadCSVForm(forms.Form):
 
     organization = forms.ChoiceField(choices=[])
     csv_file = forms.FileField()
+
+class SqlForm(forms.Form):
+    sqlInput = forms.CharField(widget=forms.Textarea)
