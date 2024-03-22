@@ -1,0 +1,11 @@
+[global]
+# Turn off the Streamlit development warning
+developmentMode = false
+
+[server]
+# Turn off the "View in Streamlit" button
+headless = true
+
+[browser]
+# Turn off the hamburger menu in the top right corner
+gatherUsageStats = false
