@@ -6,7 +6,7 @@ from django.views import View
 from rest_framework.views import APIView
 
 from .forms import UploadCSVForm
-from .models import Answer, Question, Organization
+from .models import Answer, Organization, Question
 
 
 # TODO: Get context for pages
