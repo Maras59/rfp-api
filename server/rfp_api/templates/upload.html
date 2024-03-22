@@ -1,13 +1,24 @@
 {% extends 'base_generic.html' %}
 
 {% block content %}
-  <h2>Upload CSV</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Upload</button>
-  </form>
-  {% if message %}
-    <p>{{ message }}</p>
-  {% endif %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div class="col-md-6">
+    <h2 class="text-center">Upload CSV</h2>
+    <hr> <!-- Divider -->
+    <form method="post" enctype="multipart/form-data" class="form-horizontal">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.as_p }}
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </div>
+    </form>
+    {% if message %}
+    <div class="alert alert-{{ tone }}">
+      <p>{{ message }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

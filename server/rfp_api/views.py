@@ -56,6 +56,6 @@ class CSVUploadView(View):
                 print(f"question: {question_text}, answer: {answer_text}")
                 answer = Answer.objects.create(text=answer_text, owner_organization=organization)
                 Question.objects.create(text=question_text, answer=answer)
-            return render(request, "upload.html", {"form": form, "message": "CSV file has been uploaded"})
+            return render(request, "upload.html", {"form": form, "message": "CSV file has been uploaded", "tone": "success"})
         else:
-            return render(request, "upload.html", {"form": form})
+            return render(request, "upload.html", {"form": form, "message": "Form is not valid", "tone": "danger"})
