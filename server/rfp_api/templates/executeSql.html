@@ -14,7 +14,7 @@
             <form action="{% url 'execute_sql' %}" method="post" class="mt-4">
                 {% csrf_token %}
                 <div class="form-group">
-                    <textarea id="sqlInput" name="sqlInput" class="form-control"></textarea>
+                    <textarea id="sqlInput" name="sqlInput" class="form-control">{{ sql }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Execute SQL</button>
             </form>
@@ -26,7 +26,7 @@
             <table class="table mt-4">
                 <thead>
                     <tr>
-                        {% for header in results.0 %}
+                        {% for header in columns %}
                         <th>{{ header }}</th>
                         {% endfor %}
                     </tr>

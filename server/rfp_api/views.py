@@ -65,11 +65,12 @@ class CSVUploadView(View):
         else:
             return render(request, "upload.html", {"form": form, "message": "Form is not valid", "tone": "danger"})
 
-
 def execute_sql(request):
     form = SqlForm()
     results = []
+    columns = []
     error_message = ""
+    sql = ""
     if request.method == "POST":
         form = SqlForm(request.POST)
         if form.is_valid():
@@ -78,7 +79,8 @@ def execute_sql(request):
             try:
                 with connection.cursor() as cursor:
                     cursor.execute(sql)
+                    columns = [col[0] for col in cursor.description]
                     results = cursor.fetchall()
             except ProgrammingError as e:
                 error_message = f"Invalid SQL query: {e}"
-    return render(request, "executeSql.html", {"form": form, "results": results, "error_message": error_message})
+    return render(request, "executeSql.html", {"form": form, "results": results, "columns": columns, "error_message": error_message, "sql": sql})
