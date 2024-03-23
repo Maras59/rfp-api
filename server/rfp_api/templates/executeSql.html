@@ -1,5 +1,11 @@
 {% extends 'base_generic.html' %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/sql/sql.min.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center">Execute SQL</h1>
@@ -8,10 +14,13 @@
             <form action="{% url 'execute_sql' %}" method="post" class="mt-4">
                 {% csrf_token %}
                 <div class="form-group">
-                    {{ form.sqlInput }}
+                    <textarea id="sqlInput" name="sqlInput" class="form-control"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Execute SQL</button>
             </form>
+            {% if error_message %}
+            <div class="alert alert-danger mt-4">{{ error_message }}</div>
+            {% endif %}
             <!-- Results table starts here -->
             {% if results %}
             <table class="table mt-4">
@@ -38,3 +47,17 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById('sqlInput'), {
+        mode: 'text/x-mysql',
+        indentWithTabs: true,
+        smartIndent: true,
+        lineNumbers: true,
+        matchBrackets : true,
+        autofocus: true,
+        extraKeys: {"Ctrl-Space": "autocomplete"},
+    });
+</script>
+{% endblock extra_js %}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Site{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <header>
@@ -39,5 +40,6 @@
     <footer>
         <!-- Footer content goes here -->
     </footer>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from .forms import UploadCSVForm, SqlForm
 from .models import Answer, Organization, Question
 from django.http import JsonResponse
-from django.db import connection
+from django.db import connection, ProgrammingError
 
 
 # TODO: Get context for pages
@@ -66,15 +66,18 @@ class CSVUploadView(View):
 
 
 def execute_sql(request):
+    form = SqlForm()
+    results = []
+    error_message = ''
     if request.method == 'POST':
         form = SqlForm(request.POST)
         if form.is_valid():
             sql = form.cleaned_data['sqlInput']
             # IMPORTANT: You should sanitize and validate the SQL here before executing it
-            with connection.cursor() as cursor:
-                cursor.execute(sql)
-                results = cursor.fetchall()
-            return render(request, 'executeSql.html', {'form': form, 'results': results})
-    else:
-        form = SqlForm()
-    return render(request, 'executeSql.html', {'form': form})
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql)
+                    results = cursor.fetchall()
+            except ProgrammingError as e:
+                error_message = f'Invalid SQL query: {e}'
+    return render(request, 'executeSql.html', {'form': form, 'results': results, 'error_message': error_message})
