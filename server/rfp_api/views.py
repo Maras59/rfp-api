@@ -8,6 +8,9 @@ from rest_framework.views import APIView
 
 from .forms import SqlForm, UploadCSVForm
 from .models import Answer, Organization, Question
+from django.http import HttpResponse
+from datetime import datetime
+
 
 
 # TODO: Get context for pages
@@ -81,6 +84,25 @@ def execute_sql(request):
                     cursor.execute(sql)
                     columns = [col[0] for col in cursor.description]
                     results = cursor.fetchall()
+                results = [[cell.isoformat() if isinstance(cell, datetime) else cell for cell in row] for row in results]
+                request.session['results'] = results
+                request.session['columns'] = columns
             except ProgrammingError as e:
                 error_message = f"Invalid SQL query: {e}"
     return render(request, "executeSql.html", {"form": form, "results": results, "columns": columns, "error_message": error_message, "sql": sql})
+
+def download_csv(request):
+    # Get the results from the session
+    results = request.session.get('results', [])
+    columns = request.session.get('columns', [])
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="results.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(columns)
+    for row in results:
+        writer.writerow(row)
+
+    return response

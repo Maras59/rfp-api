@@ -23,6 +23,7 @@
             {% endif %}
             <!-- Results table starts here -->
             {% if results %}
+            <a href="{% url 'download_csv' %}" class="btn btn-secondary mt-4">Download Results</a>
             <table class="table mt-4">
                 <thead>
                     <tr>
