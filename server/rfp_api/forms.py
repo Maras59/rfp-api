@@ -12,4 +12,4 @@ class UploadCSVForm(forms.Form):
     csv_file = forms.FileField()
 
 class SqlForm(forms.Form):
-    sqlInput = forms.CharField(widget=forms.Textarea)
+    sqlInput = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))

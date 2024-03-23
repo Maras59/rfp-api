@@ -1,12 +1,40 @@
 {% extends 'base_generic.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Execute SQL</h1>
-    <form action="{% url 'execute_sql' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Execute SQL</button>
-    </form>
+<div class="container mt-4">
+    <h1 class="text-center">Execute SQL</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form action="{% url 'execute_sql' %}" method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.sqlInput }}
+                </div>
+                <button type="submit" class="btn btn-primary">Execute SQL</button>
+            </form>
+            <!-- Results table starts here -->
+            {% if results %}
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        {% for header in results.0 %}
+                        <th>{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in results %}
+                    <tr>
+                        {% for cell in row %}
+                        <td>{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            <!-- Results table ends here -->
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -74,7 +74,7 @@ def execute_sql(request):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 results = cursor.fetchall()
-            return JsonResponse({'results': results})
+            return render(request, 'executeSql.html', {'form': form, 'results': results})
     else:
         form = SqlForm()
     return render(request, 'executeSql.html', {'form': form})
