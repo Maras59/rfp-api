@@ -1,16 +1,24 @@
 {% extends 'base_generic.html' %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/sql/sql.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/sql/sql.min.js"></script>
+<style>
+    #resultsTable {
+        max-height: 400px;
+        overflow-y: auto;
+        display: inline-block;
+        width: 100%;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center">Execute SQL</h1>
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-11">
             <form action="{% url 'execute_sql' %}" method="post" class="mt-4">
                 {% csrf_token %}
                 <div class="form-group">
@@ -23,25 +31,27 @@
             {% endif %}
             <!-- Results table starts here -->
             {% if results %}
-            <a href="{% url 'download_csv' %}" class="btn btn-secondary mt-4">Download Results</a>
-            <table class="table mt-4">
-                <thead>
-                    <tr>
-                        {% for header in columns %}
-                        <th>{{ header }}</th>
+            <a href="{% url 'download_csv' %}" class="btn btn-secondary mt-4">Export Results as CSV</a>
+            <div id="resultsTable">
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            {% for header in columns %}
+                            <th>{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in results %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
                         {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in results %}
-                    <tr>
-                        {% for cell in row %}
-                        <td>{{ cell }}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
             {% endif %}
             <!-- Results table ends here -->
         </div>
@@ -56,9 +66,9 @@
         indentWithTabs: true,
         smartIndent: true,
         lineNumbers: true,
-        matchBrackets : true,
+        matchBrackets: true,
         autofocus: true,
-        extraKeys: {"Ctrl-Space": "autocomplete"},
+        extraKeys: { "Ctrl-Space": "autocomplete" },
     });
 </script>
 {% endblock extra_js %}
