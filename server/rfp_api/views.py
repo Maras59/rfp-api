@@ -1,14 +1,13 @@
 import csv
 from io import TextIOWrapper
 
+from django.db import ProgrammingError, connection
 from django.shortcuts import render
 from django.views import View
 from rest_framework.views import APIView
 
-from .forms import UploadCSVForm, SqlForm
+from .forms import SqlForm, UploadCSVForm
 from .models import Answer, Organization, Question
-from django.http import JsonResponse
-from django.db import connection, ProgrammingError
 
 
 # TODO: Get context for pages
@@ -19,9 +18,10 @@ from django.db import connection, ProgrammingError
 def index_page_view(request):
     return render(request, "index.html")
 
+
 class ListAnswersView(APIView):
     def get(self, request):
-        search_term = request.query_params.get('search', '')
+        search_term = request.query_params.get("search", "")
         data = Answer.objects.filter(text__icontains=search_term)
         context = {"answers": data}
         return render(request, "answerList.html", context)
@@ -29,7 +29,7 @@ class ListAnswersView(APIView):
 
 class ListQuestionsView(APIView):
     def get(self, request):
-        search_term = request.query_params.get('search', '')
+        search_term = request.query_params.get("search", "")
         data = []
         if answer_id := request.query_params.get("q"):  # TODO: add error handling for unknown answer
             answer = Answer.objects.get(id=answer_id)
@@ -38,6 +38,7 @@ class ListQuestionsView(APIView):
             data = Question.objects.filter(text__icontains=search_term)
         context = {"questions": data}
         return render(request, "questionList.html", context)
+
 
 class CSVUploadView(View):
     def get(self, request):
@@ -68,16 +69,16 @@ class CSVUploadView(View):
 def execute_sql(request):
     form = SqlForm()
     results = []
-    error_message = ''
-    if request.method == 'POST':
+    error_message = ""
+    if request.method == "POST":
         form = SqlForm(request.POST)
         if form.is_valid():
-            sql = form.cleaned_data['sqlInput']
+            sql = form.cleaned_data["sqlInput"]
             # IMPORTANT: You should sanitize and validate the SQL here before executing it
             try:
                 with connection.cursor() as cursor:
                     cursor.execute(sql)
                     results = cursor.fetchall()
             except ProgrammingError as e:
-                error_message = f'Invalid SQL query: {e}'
-    return render(request, 'executeSql.html', {'form': form, 'results': results, 'error_message': error_message})
+                error_message = f"Invalid SQL query: {e}"
+    return render(request, "executeSql.html", {"form": form, "results": results, "error_message": error_message})
