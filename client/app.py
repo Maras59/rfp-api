@@ -1,6 +1,8 @@
 import requests
 import streamlit as st
 
+st.set_page_config(page_title=":robot:")
+
 st.title("RFP Question Answering Interface")
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "Please submit a question"}]
