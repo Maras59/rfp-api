@@ -8,25 +8,26 @@ from source.milvus_index import MilvusConnectionSecrets, MilvusService
 
 from .models import Answer, Question
 
-credentials = MilvusConnectionSecrets(user='username', password='password', host='standalone')
-index = MilvusService(credentials)
+credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
+collection = MilvusService(credentials)
+
 
 
 @receiver(pre_delete, sender=Question)
 def on_question_delete(sender, instance, **kwargs):
-    index.drop_question(instance.id)
+    collection.drop_question(instance.id)
 
 
 @receiver(pre_save, sender=Question)
 def on_question_update(sender, instance, **kwargs):
     if instance.pk and not instance._state.adding:  # If the primary key exists and not adding a new instance
-        index.update_question(instance.id, instance.text)
+        collection.update_question(instance.id, instance.text)
 
 
 @receiver(post_save, sender=Question)
 def on_question_insert(sender, instance, created, **kwargs):
     if created:
-        index.insert_question(instance.id, instance.text)
+        collection.insert_question(instance.id, instance.text)
 
 
 class Inference(APIView):
@@ -38,7 +39,7 @@ class Inference(APIView):
         return_count = int(payload.get('count', 2))
         threshold = float(payload.get('threshold', 0.4))
 
-        query_results = index.search(question, k=10, threshold=threshold)
+        query_results = collection.search(question, k=10, threshold=threshold)
 
         # get nearest neighbor
         classes = defaultdict(int)

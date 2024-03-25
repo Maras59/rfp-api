@@ -1,39 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Answers</title>
-</head>
+{% extends 'base_generic.html' %}
+
+{% block content %}
 <style>
     tr:nth-child(even) {
         background-color: #D6EEEE;
     }
-    table, th, td {
-        border: 1px solid black;
-    }
-    body {
-        font-family: Helvetica, Arial, Sans-Serif;
-    }
 </style>
-<body>
-    <h2>Answers</h2>
 
-    <table style="width:100%">
-        <tr>
-            <th style="width:5%"><strong>ID</strong></th>
-            <th style="width:70%"><strong>Answer Text</strong></th>
-            <th style="text-align:left"><strong>Links</strong></th>
-        </tr>    
-        {% for answer in answers %}
-        <tr>
-            <td style="text-align:center">{{answer.id}}</td>
-            <td>{{answer.text}}</td>
-            <td>
-                <a href="http://localhost:8000/admin/rfp_api/answer/{{ answer.id }}">Edit in Admin</a>
-                <br>
-                <a href="http://localhost:8000/questionList/?q={{ answer.id }}">View Associated Questions</a>
-            </td>
-        </tr>
-    {% endfor %}
+<h2 class="text-center mt-4">Answers</h2>
+
+<!-- Search form starts here -->
+<div class="d-flex justify-content-end p-3">
+    <form method="get" class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+</div>
+<!-- Search form ends here -->
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:5%"><strong>ID</strong></th>
+                <th style="width:70%"><strong>Answer Text</strong></th>
+                <th style="text-align:left"><strong>Links</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for answer in answers %}
+            <tr>
+                <td style="text-align:center">{{answer.id}}</td>
+                <td>{{answer.text}}</td>
+                <td>
+                    <a href="http://localhost:8000/admin/rfp_api/answer/{{ answer.id }}">Edit in Admin</a>
+                    <br>
+                    <a href="http://localhost:8000/questionList/?q={{ answer.id }}">View Associated Questions</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-</body>
-</html>
+</div>
+{% endblock %}
