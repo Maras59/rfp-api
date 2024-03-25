@@ -30,3 +30,10 @@ class Question(models.Model):
 
     def __str__(self):
         return f'{self.id}: ' + truncatechars(self.text, CHAR_LENGTH)
+
+
+class Ticket(models.Model):
+    issue = models.TextField()
+    resolved = models.BooleanField(default=False)
+    answer_id = models.IntegerField(null=True)
+    question_id = models.IntegerField(null=True)
