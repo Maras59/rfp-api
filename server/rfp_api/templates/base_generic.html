@@ -4,22 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Site{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <header>
-        <nav>
-            <!-- Navigation items go here -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/">RFP Question Answer Application</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/">Admin Console</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/answerList/">Answer List</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/questionList/">Question List</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/uploadCsv/">Bulk Insert</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/executeSql/">Execute SQL</a>
+                    </li>
+                </ul>
+            </div>
         </nav>
     </header>
-
     <main>
         {% block content %}
         <!-- Content for each page will be inserted here -->
         {% endblock %}
     </main>
-
     <footer>
         <!-- Footer content goes here -->
     </footer>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

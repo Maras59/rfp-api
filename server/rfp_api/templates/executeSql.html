@@ -1,0 +1,74 @@
+{% extends 'base_generic.html' %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/sql/sql.min.js"></script>
+<style>
+    #resultsTable {
+        max-height: 400px;
+        overflow-y: auto;
+        display: inline-block;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">Execute SQL</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <form action="{% url 'execute_sql' %}" method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea id="sqlInput" name="sqlInput" class="form-control">{{ sql }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Execute SQL</button>
+            </form>
+            {% if error_message %}
+            <div class="alert alert-danger mt-4">{{ error_message }}</div>
+            {% endif %}
+            <!-- Results table starts here -->
+            {% if results %}
+            <a href="{% url 'download_csv' %}" class="btn btn-secondary mt-4">Export Results as CSV</a>
+            <div id="resultsTable">
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            {% for header in columns %}
+                            <th>{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in results %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            <!-- Results table ends here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById('sqlInput'), {
+        mode: 'text/x-mysql',
+        indentWithTabs: true,
+        smartIndent: true,
+        lineNumbers: true,
+        matchBrackets: true,
+        autofocus: true,
+        extraKeys: { "Ctrl-Space": "autocomplete" },
+    });
+</script>
+{% endblock extra_js %}
