@@ -1,4 +1,4 @@
-"""
+'''
 URL configuration for rfp_api project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -13,7 +13,7 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+'''
 
 from django.contrib import admin
 from django.urls import path
@@ -22,10 +22,10 @@ from .inference import Inference
 from .views import CSVUploadView, ListAnswersView, ListQuestionsView, index_page_view
 
 urlpatterns = [
-    path("", index_page_view, name="index"),
-    path("admin/", admin.site.urls),
-    path("answerList/", ListAnswersView.as_view(), name="answers"),
-    path("questionList/", ListQuestionsView.as_view(), name="questions"),
-    path("inference/", Inference.as_view(), name="inference"),
-    path("uploadCsv/", CSVUploadView.as_view(), name="upload-csv"),
+    path('', index_page_view, name='index'),
+    path('admin/', admin.site.urls),
+    path('answerList/', ListAnswersView.as_view(), name='answers'),
+    path('questionList/', ListQuestionsView.as_view(), name='questions'),
+    path('inference/', Inference.as_view(), name='inference'),
+    path('uploadCsv/', CSVUploadView.as_view(), name='upload-csv'),
 ]

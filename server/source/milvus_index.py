@@ -14,9 +14,9 @@ from sentence_transformers import SentenceTransformer
 class MilvusConnectionSecrets:
     user: str
     password: str
-    alias: Optional[str] = "default"
-    host: Optional[str] = "localhost"
-    port: Optional[str] = "19530"
+    alias: Optional[str] = 'default'
+    host: Optional[str] = 'localhost'
+    port: Optional[str] = '19530'
 
 
 @dataclass
@@ -27,7 +27,7 @@ class QueryResult:
 
 def preload_collection(func):
     @wraps(func)
-    def wrapper(self: "MilvusService", *args, **kwargs):
+    def wrapper(self: 'MilvusService', *args, **kwargs):
         self.collection.load()
         return func(self, *args, **kwargs)
 
@@ -35,14 +35,14 @@ def preload_collection(func):
 
 
 class MilvusService:
-    index_params = {"metric_type": "COSINE", "index_type": "FLAT"}
+    index_params = {'metric_type': 'COSINE', 'index_type': 'FLAT'}
     search_params = {
-        "metric_type": "COSINE",
-        "offset": 0,
-        "ignore_growing": False,
+        'metric_type': 'COSINE',
+        'offset': 0,
+        'ignore_growing': False,
     }
-    collection_name = "questions"
-    index_name = "questions_embedding"
+    collection_name = 'questions'
+    index_name = 'questions_embedding'
 
     def __init__(
         self,
@@ -51,7 +51,7 @@ class MilvusService:
         verbose: bool = False,
         reset: bool = False,
     ):
-        self.embedding_model = SentenceTransformer("all-mpnet-base-v2")
+        self.embedding_model = SentenceTransformer('all-mpnet-base-v2')
         self.connect(credentials)
         self.collection: Collection = self.create_or_get_collection(reset)
         if df is not None:
@@ -71,29 +71,29 @@ class MilvusService:
             else:
                 return collection
         question_id = FieldSchema(
-            name="id",
+            name='id',
             dtype=DataType.INT64,
             is_primary=True,
         )
         text_embedding = FieldSchema(name=self.index_name, dtype=DataType.FLOAT_VECTOR, dim=768)
         schema = CollectionSchema(
-            fields=[question_id, text_embedding], description="Question search", enable_dynamic_field=True
+            fields=[question_id, text_embedding], description='Question search', enable_dynamic_field=True
         )
 
-        return Collection(name=self.collection_name, schema=schema, using="default", shards_num=2)
+        return Collection(name=self.collection_name, schema=schema, using='default', shards_num=2)
 
     def create_index(self):
         self.collection.create_index(field_name=self.index_name, index_params=self.index_params)
 
     def insert(self, df: pd.DataFrame):
-        df[self.index_name] = self.embedding_model.encode(df["text"].tolist()).tolist()
-        df = df[["id", self.index_name]]
+        df[self.index_name] = self.embedding_model.encode(df['text'].tolist()).tolist()
+        df = df[['id', self.index_name]]
         self.collection.insert(df)
 
     @preload_collection
-    def search(self, query: str, k: Optional[int] = 10, threshold: float = -1 * float("inf")) -> List[QueryResult]:
+    def search(self, query: str, k: Optional[int] = 10, threshold: float = -1 * float('inf')) -> List[QueryResult]:
         # if k > len(self):
-        #     raise ValueError(f"Your index has size {len(self)} but you set n_results to {k}.")
+        #     raise ValueError(f'Your index has size {len(self)} but you set n_results to {k}.')
 
         vector = self.embedding_model.encode([query])
         query_results = self.collection.search(
@@ -123,7 +123,7 @@ class MilvusService:
         return sorted_classes
 
     def inference(
-        self, query: str, k: Optional[int] = 10, return_count: Optional[int] = 1, threshold: float = float("inf")
+        self, query: str, k: Optional[int] = 10, return_count: Optional[int] = 1, threshold: float = float('inf')
     ) -> List[Tuple[int, float]]:
         results = self.search(query, k=k, threshold=threshold)
 
@@ -132,15 +132,15 @@ class MilvusService:
         return top_answers
 
     def drop_question(self, question_id: int) -> None:
-        expr = f"id in [{question_id}]"
+        expr = f'id in [{question_id}]'
         self.collection.delete(expr)
 
     def update_question(self, question_id: int, text: str) -> None:
         self.drop_question(question_id)
-        self.insert(pd.DataFrame({"id": [question_id], "text": [text]}))
+        self.insert(pd.DataFrame({'id': [question_id], 'text': [text]}))
 
     def insert_question(self, question_id: int, text: str) -> None:
-        self.insert(pd.DataFrame({"id": [question_id], "text": [text]}))
+        self.insert(pd.DataFrame({'id': [question_id], 'text': [text]}))
 
     def __sizeof__(self) -> int:
         return self.collection.num_entities
