@@ -12,7 +12,6 @@ credentials = MilvusConnectionSecrets(user="username", password="password", host
 collection = MilvusService(credentials)
 
 
-
 @receiver(pre_delete, sender=Question)
 def on_question_delete(sender, instance, **kwargs):
     collection.drop_question(instance.id)
@@ -33,11 +32,11 @@ def on_question_insert(sender, instance, created, **kwargs):
 class Inference(APIView):
     def post(self, request) -> JsonResponse:
         payload = request.data
-        if not (question := payload.get('question')):
-            return JsonResponse({'res': 'No question found in the payload'})
+        if not (question := payload.get("question")):
+            return JsonResponse({"res": "No question found in the payload"})
 
-        return_count = int(payload.get('count', 2))
-        threshold = float(payload.get('threshold', 0.4))
+        return_count = int(payload.get("count", 2))
+        threshold = float(payload.get("threshold", 0.4))
 
         query_results = collection.search(question, k=10, threshold=threshold)
 
@@ -55,6 +54,6 @@ class Inference(APIView):
         for question_id, score in question_ids:
             answer = Answer.objects.get(id=question_id)
             question = Question.objects.get(answer=answer)
-            answers.append({'similar_question': question.text, 'answer': answer.text, 'score': score})
+            answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
 
         return JsonResponse(answers, safe=False)

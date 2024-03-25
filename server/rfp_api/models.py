@@ -10,7 +10,7 @@ class Organization(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name}"
 
 
 class Answer(models.Model):
@@ -19,7 +19,7 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.id}: ' + truncatechars(self.text, CHAR_LENGTH)
+        return f"{self.id}: " + truncatechars(self.text, CHAR_LENGTH)
 
 
 class Question(models.Model):
@@ -29,4 +29,4 @@ class Question(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.id}: ' + truncatechars(self.text, CHAR_LENGTH)
+        return f"{self.id}: " + truncatechars(self.text, CHAR_LENGTH)
