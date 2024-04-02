@@ -1,0 +1,48 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+
+<div class="card mx-auto" style="width: 76rem;">
+    <div class="card-body">
+        <h5 class="card-title mb-3">All Tickets</h5>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Question</th>
+                    <th scope="col">Created On</th>
+                    <th scope="col">Assigned To</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td><small>{{ticket.description}}</small></td>
+                    <td><small>{{ticket.date_created}}</small></td>
+                    <td>
+                        {% if ticket.assigned_to %}
+                            <small>{{ticket.assigned_to}}</small>
+                        {% else %}
+                            <small>Not Assigned</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ticket.ticket_status == 'Active' %}
+                            <span class="badge bg-warning">Active</span>
+                        {% elif ticket.ticket_status == 'Pending' %}
+                            <span class="badge bg-danger">Pending</span>
+                        {% elif ticket.ticket_status == 'Completed' %}
+                            <span class="badge bg-success">Completed</span>
+                        {% endif %}
+                    </td>
+                    <td><small><a href="{% url 'ticket-details' ticket.pk%}">View Details</a></small></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

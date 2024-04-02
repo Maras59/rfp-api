@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from django.utils.http import urlencode
 from django.utils.translation import gettext_lazy as _
 
-from .models import Answer, Organization, Question
+from .models import Answer, Organization, Question, Ticket
 
 
 # Register your models here.
@@ -42,3 +42,7 @@ class QuestionAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ("name", "description")
+
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ("description", "date_created", "assigned_to", "is_resolved", "ticket_status")

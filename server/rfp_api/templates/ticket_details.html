@@ -1,0 +1,68 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+
+<style>
+.card-body {
+  padding: 2rem;
+}
+
+.card-title {
+  margin-bottom: 1rem;
+}
+
+.box {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  float: left;
+  width: 50%;
+}
+
+.box-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.badge {
+  margin-left: 1rem;
+}
+</style>
+
+<div class="card-body">
+    <div class="row">
+        <div class="col">
+            <div class="box">
+                <h5 class="card-title mb-3"><b>Question to review: </b>{{ticket.description}}</h5><br>
+                
+                <div class="box-row">
+                    <b>Ticket Number:  &nbsp;&nbsp;{{ticket.ticket_number}}</b> 
+                </div><br>
+                <div class="box-row">
+                    <div>
+                        <b>Date created:</b>&nbsp;&nbsp; {{ticket.date_created}}
+                    </div>
+                    <div class="coll">
+                        <b>Assigned To:</b> &nbsp;&nbsp;{{ticket.assigned_to}}
+                    </div>
+                </div><br>
+                <div class="box-row">
+                    <div>
+                        {% if ticket.is_resolved %}
+                        <b>Resolved yet?</b> <span class="badge bg-success">Resolved</span>
+                        {% else %}
+                        <b>Resolved yet?</b> <span class="badge bg-danger">Not Yet</span>
+                        {% endif %}
+                    </div>
+                    <div class="coll">
+                        <b>Ticket Status:</b> &nbsp;&nbsp;{{ticket.ticket_status}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

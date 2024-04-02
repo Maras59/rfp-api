@@ -1,5 +1,6 @@
 import requests
 import streamlit as st
+import textwrap as tw
 
 st.set_page_config(page_title=":robot:")
 
@@ -30,5 +31,5 @@ if prompt := st.chat_input():
         st.chat_message("assistant").write(message)
     for answer in answers:
         add_assistant_message(answer["answer"])
-        st.chat_message("assistant").write(answer["answer"])
+        st.code("\n".join(tw.wrap(answer["answer"], width=80,)))
         break
