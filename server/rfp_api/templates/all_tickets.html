@@ -9,7 +9,7 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th scope="col">Question</th>
+                    <th scope="col">Questions</th>
                     <th scope="col">Created On</th>
                     <th scope="col">Assigned To</th>
                     <th scope="col">Status</th>
@@ -30,11 +30,11 @@
                     </td>
                     <td>
                         {% if ticket.ticket_status == 'Active' %}
-                            <span class="badge bg-warning">Active</span>
+                            <span class="badge bg-primary"style="color: white;">Active</span>
                         {% elif ticket.ticket_status == 'Pending' %}
-                            <span class="badge bg-danger">Pending</span>
+                            <span class="badge bg-warning"style="color: white;">Pending</span>
                         {% elif ticket.ticket_status == 'Completed' %}
-                            <span class="badge bg-success">Completed</span>
+                            <span class="badge bg-success"style="color: white;">Completed</span>
                         {% endif %}
                     </td>
                     <td><small><a href="{% url 'ticket-details' ticket.pk%}">View Details</a></small></td>
