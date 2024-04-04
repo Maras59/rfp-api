@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from rest_framework.views import APIView
 from source.milvus_index import MilvusConnectionSecrets, MilvusService
 
-from .models import Answer, Question, Ticket
+from .models import Answer, Organization, Question, Ticket
 
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 collection = MilvusService(credentials)
@@ -78,10 +78,15 @@ class SendTicket(APIView):
         payload = request.data
 
         description = payload.get('description')
-        assigned_to = payload.get('assigned_to')
+        assigned_to_name = payload.get('assigned_to')
+
+        assigned_org = Organization.objects.filter(name=assigned_to_name).first()   
+        if not assigned_org:
+            assigned_org = None
+
 
         try:
-            ticket = Ticket.objects.create(description=description, assigned_to=assigned_to, status='Pending')
+            ticket = Ticket.objects.create(description=description, assigned_to=assigned_org, status='Pending')
             ticket.save()
         except Exception as e:
             return JsonResponse({'error': str(e)})
