@@ -84,10 +84,10 @@ class SendTicket(APIView):
         if not assigned_org:
             assigned_org = None
 
-
         try:
             ticket = Ticket.objects.create(description=description, assigned_to=assigned_org, status='Pending')
             ticket.save()
+
         except Exception as e:
             return JsonResponse({'error': str(e)})
         return JsonResponse({'id': ticket.id})

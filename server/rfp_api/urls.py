@@ -31,6 +31,6 @@ urlpatterns = [
     path("executeSql/", execute_sql, name="execute_sql"),
     path("download_csv/", download_csv, name="download_csv"),
     path("ticket-details/<int:pk>/", ticket_details, name="ticket-details"),
-    path("create-ticket/", create_ticket, name="create-ticket"),
+    path("send-ticket/", Inference.SendTicket.as_view(), name="send-ticket"),
     path("all-tickets/", all_tickets, name="all-tickets")
 ]
