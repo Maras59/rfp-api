@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from rest_framework.views import APIView
 from source.milvus_index import MilvusConnectionSecrets, MilvusService
 
-from .models import Answer, Question
+from .models import Answer, Question, Ticket
 
 credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
 collection = MilvusService(credentials)
@@ -31,6 +31,16 @@ def on_question_insert(sender, instance, created, **kwargs):
 
 class Inference(APIView):
     def post(self, request) -> JsonResponse:
+        """
+        The endpoint to handle POST requests and return JsonResponse with answers to similar questions.
+        This is the main API endpoint. All questions will be embedded and then compared with embeddings in Milvus
+        
+        Parameters:
+            request: HttpRequest object containing the payload data
+            
+        Returns:
+            JsonResponse: JSON response with answers to similar questions
+        """
         payload = request.data
         if not (question := payload.get("question")):
             return JsonResponse({"res": "No question found in the payload"})
@@ -57,3 +67,22 @@ class Inference(APIView):
             answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
 
         return JsonResponse(answers, safe=False)
+
+class SendTicket(APIView):
+    def post(self, request):
+        """
+        Function to handle POST requests. Creates a new ticket based on the provided data in the request.
+        :param request: The HTTP request object containing data for creating a new ticket.
+        :return: A JSON response with the ID of the newly created ticket if successful, otherwise an error message.
+        """
+        payload = request.data
+
+        description = payload.get('description')
+        assigned_to = payload.get('assigned_to')
+
+        try:
+            ticket = Ticket.objects.create(description=description, assigned_to=assigned_to, status='Pending')
+            ticket.save()
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+        return JsonResponse({'id': ticket.id})
