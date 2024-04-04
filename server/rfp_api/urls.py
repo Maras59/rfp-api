@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .inference import Inference
+from .inference import Inference, SendTicket
 from .views import *
 
 urlpatterns = [
@@ -31,6 +31,6 @@ urlpatterns = [
     path("executeSql/", execute_sql, name="execute_sql"),
     path("download_csv/", download_csv, name="download_csv"),
     path("ticket-details/<int:pk>/", ticket_details, name="ticket-details"),
-    path("send-ticket/", Inference.SendTicket.as_view(), name="send-ticket"),
+    path("send-ticket/", SendTicket.as_view(), name="send-ticket"),
     path("all-tickets/", all_tickets, name="all-tickets")
 ]
