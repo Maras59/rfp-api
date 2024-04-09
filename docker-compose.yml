@@ -92,7 +92,6 @@ services:
 
 networks:
   default:
-    name: milvus
 
 volumes:
   postgres_data:
