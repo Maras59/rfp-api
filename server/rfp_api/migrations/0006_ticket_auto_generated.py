@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rfp_api', '0005_ticket_answer_id_ticket_question_id'),
+        ("rfp_api", "0005_ticket_answer_id_ticket_question_id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ticket',
-            name='auto_generated',
+            model_name="ticket",
+            name="auto_generated",
             field=models.BooleanField(default=False),
         ),
     ]
