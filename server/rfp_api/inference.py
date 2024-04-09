@@ -67,7 +67,7 @@ class Inference(APIView):
             answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
 
         if not answers:
-            Ticket(description=payload.get("question"), status="Pending", auto_generated=True).save()
+            Ticket(description=payload.get("question"), ticket_status="Pending", auto_generated=True).save()
 
         return JsonResponse(answers, safe=False)
 
@@ -96,7 +96,7 @@ class SendTicket(APIView):
                 assigned_to=assigned_org,
                 question_id=question_id,
                 answer_id=answer_id,
-                status="Pending",
+                ticket_status="Pending",
             )
             ticket.save()
 
