@@ -46,6 +46,8 @@ class Ticket(models.Model):
     accepted_date = models.DateTimeField(null=True, blank=True)
     closed_date = models.DateTimeField(null=True, blank=True)
     ticket_status = models.CharField(max_length=15, choices=status_choices)
+    answer_id = models.IntegerField(null=True, blank=True)
+    question_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.description
