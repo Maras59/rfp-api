@@ -52,24 +52,56 @@ class Inference(APIView):
 
         # get nearest neighbor
         classes = defaultdict(int)
+        answer_metadata = defaultdict(lambda: (0, 0))
         for item in query_results:
             question = Question.objects.get(id=item.question_id)
             classes[question.answer.id] += item.score
+            _, score = answer_metadata[question.answer.id]
+            if score < item.score:
+                answer_metadata[question.answer.id] = (question.id, item.score)
 
         # create list of tuples (score, class) and sort it
         sorted_classes = sorted(classes.items(), key=lambda x: x[1], reverse=True)
-        question_ids = sorted_classes[:return_count]
+        answer_ids = sorted_classes[:return_count]
 
         answers = []
-        for question_id, score in question_ids:
-            answer = Answer.objects.get(id=question_id)
-            question = Question.objects.get(answer=answer)
-            answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
+        for answer_id, score in answer_ids:
+            answer = Answer.objects.get(id=answer_id)
+            question_id, _ = answer_metadata[answer_id]
+            question = Question.objects.get(id=question_id)
+            answers.append(
+                {"similar_question": question.text, "answer": answer.text, "score": score, "answer_id": answer.id}
+            )
 
         if not answers:
             Ticket(description=payload.get("question"), ticket_status="Pending", auto_generated=True).save()
 
         return JsonResponse(answers, safe=False)
+
+
+class InsertQuestion(APIView):
+    def post(self, request):
+        """
+        Function to handle POST requests. Creates a new question based on the provided data in the request.
+        :param request: The HTTP request object containing data for creating a new question.
+        :return: A JSON response with the ID of the newly created question if successful, otherwise an error message.
+        """
+        payload = request.data
+        question_text = payload.get("question_text")
+
+        if Question.objects.filter(text=question_text).exists():
+            return JsonResponse({"error": "Question already exists in the database"})
+
+        answer_id = payload.get("answer_id")
+
+        try:
+            answer = Answer.objects.get(id=answer_id)
+            question = Question.objects.create(text=question_text, answer=answer)
+            question.save()
+        except Exception as e:
+            return JsonResponse({"error": str(e)})
+
+        return JsonResponse({"id": question.id})
 
 
 class SendTicket(APIView):
