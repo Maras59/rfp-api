@@ -1,4 +1,5 @@
 import uuid
+
 from django.db import models
 from django.template.defaultfilters import truncatechars
 
@@ -32,12 +33,9 @@ class Question(models.Model):
     def __str__(self):
         return f"{self.id}: " + truncatechars(self.text, CHAR_LENGTH)
 
+
 class Ticket(models.Model):
-    status_choices = (
-        ('Active', 'Active'),
-        ('Completed', 'Completed'),
-        ('Pending', 'Pending')
-    )
+    status_choices = (("Active", "Active"), ("Completed", "Completed"), ("Pending", "Pending"))
     ticket_number = models.UUIDField(default=uuid.uuid4)
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)

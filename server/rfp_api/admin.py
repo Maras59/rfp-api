@@ -43,6 +43,7 @@ class QuestionAdmin(admin.ModelAdmin):
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ("name", "description")
 
+
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
     list_display = ("description", "date_created", "assigned_to", "is_resolved", "ticket_status")

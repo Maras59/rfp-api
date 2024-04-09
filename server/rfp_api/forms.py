@@ -15,12 +15,14 @@ class UploadCSVForm(forms.Form):
 class SqlForm(forms.Form):
     sqlInput = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control"}))
 
+
 class CreateTicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['description']
+        fields = ["description"]
+
 
 class UpdateTicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['description']
+        fields = ["description"]

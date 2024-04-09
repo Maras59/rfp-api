@@ -32,5 +32,5 @@ urlpatterns = [
     path("download_csv/", download_csv, name="download_csv"),
     path("ticket-details/<int:pk>/", ticket_details, name="ticket-details"),
     path("send-ticket/", SendTicket.as_view(), name="send-ticket"),
-    path("all-tickets/", all_tickets, name="all-tickets")
+    path("all-tickets/", all_tickets, name="all-tickets"),
 ]

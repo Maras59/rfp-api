@@ -34,10 +34,10 @@ class Inference(APIView):
         """
         The endpoint to handle POST requests and return JsonResponse with answers to similar questions.
         This is the main API endpoint. All questions will be embedded and then compared with embeddings in Milvus
-        
+
         Parameters:
             request: HttpRequest object containing the payload data
-            
+
         Returns:
             JsonResponse: JSON response with answers to similar questions
         """
@@ -66,7 +66,11 @@ class Inference(APIView):
             question = Question.objects.get(answer=answer)
             answers.append({"similar_question": question.text, "answer": answer.text, "score": score})
 
+        if not answers:
+            Ticket(description=payload.get("question"), status="Pending").save()
+
         return JsonResponse(answers, safe=False)
+
 
 class SendTicket(APIView):
     def post(self, request):
@@ -77,23 +81,25 @@ class SendTicket(APIView):
         """
         payload = request.data
 
-        description = payload.get('description')
-        assigned_to_name = payload.get('assigned_to')
-        answer_id = payload.get('answer_id')
-        question_id = payload.get('question_id')
+        description = payload.get("description")
+        assigned_to_name = payload.get("assigned_to")
+        answer_id = payload.get("answer_id")
+        question_id = payload.get("question_id")
 
-        assigned_org = Organization.objects.filter(name=assigned_to_name).first()   
+        assigned_org = Organization.objects.filter(name=assigned_to_name).first()
         if not assigned_org:
             assigned_org = None
 
         try:
-            ticket = Ticket.objects.create(description=description, 
-                                           assigned_to=assigned_org,
-                                             question_id=question_id, 
-                                             answer_id=answer_id, 
-                                             status='Pending')
+            ticket = Ticket.objects.create(
+                description=description,
+                assigned_to=assigned_org,
+                question_id=question_id,
+                answer_id=answer_id,
+                status="Pending",
+            )
             ticket.save()
 
         except Exception as e:
-            return JsonResponse({'error': str(e)})
-        return JsonResponse({'id': ticket.id})
+            return JsonResponse({"error": str(e)})
+        return JsonResponse({"id": ticket.id})
