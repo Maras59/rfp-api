@@ -79,13 +79,19 @@ class SendTicket(APIView):
 
         description = payload.get('description')
         assigned_to_name = payload.get('assigned_to')
+        answer_id = payload.get('answer_id')
+        question_id = payload.get('question_id')
 
         assigned_org = Organization.objects.filter(name=assigned_to_name).first()   
         if not assigned_org:
             assigned_org = None
 
         try:
-            ticket = Ticket.objects.create(description=description, assigned_to=assigned_org, status='Pending')
+            ticket = Ticket.objects.create(description=description, 
+                                           assigned_to=assigned_org,
+                                             question_id=question_id, 
+                                             answer_id=answer_id, 
+                                             status='Pending')
             ticket.save()
 
         except Exception as e:
