@@ -19,13 +19,11 @@ from django.contrib import admin
 from django.urls import path
 
 from .inference import Inference, InsertQuestion, SendTicket
-from .views import *
+from .views import index_page_view, CSVUploadView, execute_sql, download_csv, ticket_details, all_tickets
 
 urlpatterns = [
     path("", index_page_view, name="index"),
     path("admin/", admin.site.urls),
-    path("answerList/", ListAnswersView.as_view(), name="answers"),
-    path("questionList/", ListQuestionsView.as_view(), name="questions"),
     path("inference/", Inference.as_view(), name="inference"),
     path("insert_question/", InsertQuestion.as_view(), name="insert_question"),
     path("uploadCsv/", CSVUploadView.as_view(), name="upload-csv"),

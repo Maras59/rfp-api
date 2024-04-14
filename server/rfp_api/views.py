@@ -3,40 +3,17 @@ from datetime import datetime
 from io import TextIOWrapper
 
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.db import ProgrammingError, connection
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
-from rest_framework.views import APIView
 
-from .forms import CreateTicketForm, SqlForm, UpdateTicketForm, UploadCSVForm
+from .forms import CreateTicketForm, SqlForm, UploadCSVForm
 from .models import Answer, Organization, Question, Ticket
 
 
 def index_page_view(request):
     return render(request, "index.html")
-
-
-class ListAnswersView(APIView):
-    def get(self, request):
-        search_term = request.query_params.get("search", "")
-        data = Answer.objects.filter(text__icontains=search_term)
-        context = {"answers": data}
-        return render(request, "answerList.html", context)
-
-
-class ListQuestionsView(APIView):
-    def get(self, request):
-        search_term = request.query_params.get("search", "")
-        data = []
-        if answer_id := request.query_params.get("q"):  # TODO: add error handling for unknown answer
-            answer = Answer.objects.get(id=answer_id)
-            data = answer.question_set.filter(text__icontains=search_term)
-        else:
-            data = Question.objects.filter(text__icontains=search_term)
-        context = {"questions": data}
-        return render(request, "questionList.html", context)
 
 
 class CSVUploadView(View):
