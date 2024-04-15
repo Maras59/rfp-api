@@ -12,7 +12,7 @@ from .models import Answer, Organization, Question, Ticket
 class AnswerAdmin(admin.ModelAdmin):
     search_fields = ("id", "text")
 
-    list_display = ("id", "text", "view_questions_link")
+    list_display = ("id", "text", 'owner_organization', "view_questions_link")
     readonly_fields = ("id",)
 
     def view_questions_link(self, obj):
