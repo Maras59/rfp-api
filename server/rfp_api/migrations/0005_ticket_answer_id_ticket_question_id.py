@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("rfp_api", "0004_remove_ticket_created_by_remove_ticket_title"),
     ]
