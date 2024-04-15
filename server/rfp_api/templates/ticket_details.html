@@ -1,0 +1,93 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+
+<style>
+.card-body {
+  padding: 2rem;
+}
+
+.card-title {
+  margin-bottom: 1rem;
+}
+
+.box {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  float: left;
+  width: 50%;
+}
+
+.box-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.badge {
+  margin-left: 1rem;
+}
+</style>
+
+<div class="card-body">
+    <div class="row">
+        <div class="col">
+            <div class="box">
+                <h5 class="card-title mb-3"><b>Question to review:</b><br>{{ticket.description}}</h5><br>
+                
+                <div class="box-row">
+                    <div>
+                        <b>Ticket Number:  &nbsp;&nbsp;</b> {{ticket.ticket_number}}
+                    </div>
+                </div><br>
+                <div class="box-row">
+                    <div>
+                        {% if ticket.accepted_date %}
+                        <b>Date Accepted:</b>&nbsp;&nbsp; {{ticket.accepted_date}}
+                        {% else %}
+                        <b>Date Accepted:</b>&nbsp;&nbsp; The ticket has not been accepted Yet
+                        {% endif %}
+                    </div>
+                    <div class="coll">
+                        {% if ticket.assigned_to %}
+                        <b>Assigned To:</b> &nbsp;&nbsp;{{ticket.assigned_to}}
+                        {% else %}
+                        <b>Assigned To:</b> <span class="badge rounded-pill bg-secondary"style="color: white;">Not Assigned</span>
+                        {% endif %}
+                    </div>
+                </div><br>
+                <div class="box-row">
+                    <div>
+                        {% if ticket.is_resolved %}
+                        <b>Resolved yet?:</b> <span class="badge rounded-pill bg-success"style="color: white;">Resolved</span>
+                        {% else %}
+                        <b>Resolved yet?:</b> <span class="badge rounded-pill bg-danger"style="color: white;">Not Yet</span>
+                        {% endif %}
+                    </div>
+                    <div class="coll">
+                        {% if ticket.ticket_status == 'Active' %}
+                        <b>Ticket Status:</b><span class="badge bg-primary"style="color: white;">Active</span>
+                        {% elif ticket.ticket_status == 'Pending' %}
+                        <b>Ticket Status:</b><span class="badge bg-warning"style="color: white;">Pending</span>
+                        {% elif ticket.ticket_status == 'Completed' %}
+                        <b>Ticket Status:</b><span class="badge bg-success"style="color: white;">Completed</span>
+                        {% endif %}
+                    </div>
+                </div><br>
+                <div class="box-row">
+                    <div>
+                        {% if ticket.closed_date %}
+                        <b>Date Closed:  &nbsp;&nbsp;{{ticket.closed_date}}</b> 
+                        {% else %}
+                        <b>Date Closed: &nbsp;&nbsp; </b> The ticket is still active
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

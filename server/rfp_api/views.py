@@ -2,39 +2,18 @@ import csv
 from datetime import datetime
 from io import TextIOWrapper
 
+from django.contrib import messages
 from django.db import ProgrammingError, connection
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views import View
-from rest_framework.views import APIView
 
-from .forms import SqlForm, UploadCSVForm
-from .models import Answer, Organization, Question
+from .forms import CreateTicketForm, SqlForm, UploadCSVForm
+from .models import Answer, Organization, Question, Ticket
 
 
 def index_page_view(request):
     return render(request, "index.html")
-
-
-class ListAnswersView(APIView):
-    def get(self, request):
-        search_term = request.query_params.get("search", "")
-        data = Answer.objects.filter(text__icontains=search_term)
-        context = {"answers": data}
-        return render(request, "answerList.html", context)
-
-
-class ListQuestionsView(APIView):
-    def get(self, request):
-        search_term = request.query_params.get("search", "")
-        data = []
-        if answer_id := request.query_params.get("q"):  # TODO: add error handling for unknown answer
-            answer = Answer.objects.get(id=answer_id)
-            data = answer.question_set.filter(text__icontains=search_term)
-        else:
-            data = Question.objects.filter(text__icontains=search_term)
-        context = {"questions": data}
-        return render(request, "questionList.html", context)
 
 
 class CSVUploadView(View):
@@ -112,3 +91,85 @@ def download_csv(request):
         writer.writerow(row)
 
     return response
+
+
+def create_ticket(request):
+    if request.method == "POST":
+        form = CreateTicketForm(request.POST)
+        if form.is_valid():
+            var = form.save(commit=False)
+            var.created_by = request.organization
+            var.ticket_status = "Pending"
+            var.save()
+            messages.info(request, "Your ticket has been successfully submitted.")
+            return redirect("index")
+        else:
+            messages.warning(request, "Something went wrong. Please check form input")
+            return redirect("create-ticket")
+    else:
+        form = CreateTicketForm()
+        context = {"form": form}
+        return render(request, "create_ticket.html", context)
+
+
+def all_tickets(request):
+    tickets = Ticket.objects.all()
+    context = {"tickets": tickets}
+    return render(request, "all_tickets.html", context)
+
+
+def ticket_details(request, pk):
+    ticket = Ticket.objects.get(pk=pk)
+    context = {"ticket": ticket}
+    return render(request, "ticket_details.html", context)
+
+
+# def ticket_queue(request):
+#    tickets = Ticket.objects.filter(ticket_status='Pending')
+#    context = {'tickets':tickets}
+#    return render(request, 'ticket_queue.html', context)
+
+# def accept_ticket(request, pk):
+#    ticket = Ticket.objects.get(pk=pk)
+#    ticket.assigned_to = request.user
+#    ticket.ticket_status = 'Active'
+#    ticket.accepted_date = datetime.datetime.Now()
+#    ticket.save()
+#    messages.info(request, 'Ticket has been accepted. Please resolve as soon as possible!')
+#    return redirect('ticket-queue')
+
+
+# def close_ticket(request, pk):
+#    ticket = Ticket.objects.get(pk=pk)
+#    ticket.ticket_status = 'Completed'
+#    ticket.is_resolved = True
+#    ticket.closed_date = datetime.datetime.Now()
+#    ticket.save()
+#    messages.info(request, 'Ticket has been resolved.')
+#    return redirect('ticket-queue')
+
+# def workspace(request):
+#    tickets = Ticket.objects.filter(assigned_to=request.organization, is_resolved=False)
+#    context = {'tickets':tickets}
+#    return render(request, 'workspace.html', context)
+
+# def all_closed_tickets(request):
+#    tickets = Ticket.objects.filter(assigned_to=request.organization, is_resolved=True)
+#    context = {'tickets':tickets}
+#    return render(request, 'all_closed_tickets.html', context)
+
+# def update_ticket(request, pk):
+#    ticket = Ticket.objects.get(pk=pk)
+#    if request.method == 'POST':
+#        form = UpdateTicketForm(request.POST, instance=ticket)
+#        if form.is_valid():
+#            form.save()
+#            messages.info(request, 'Your ticket info has been updated and all the changes are saved in the Database')
+#            return redirect('index.html')
+#        else:
+#            messages.warning(request, 'Something went wrong. Please check form input')
+# return redirect('create-ticket')
+#    else:
+#        form = UpdateTicketForm(instance=ticket)
+#        context = {'form':form}
+#        return render(request, 'update_ticket.html', context)

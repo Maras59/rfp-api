@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Organization
+from .models import Organization, Ticket
 
 
 class UploadCSVForm(forms.Form):
@@ -14,3 +14,15 @@ class UploadCSVForm(forms.Form):
 
 class SqlForm(forms.Form):
     sqlInput = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control"}))
+
+
+class CreateTicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ["description"]
+
+
+class UpdateTicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ["description"]

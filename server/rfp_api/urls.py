@@ -18,16 +18,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .inference import Inference
-from .views import CSVUploadView, ListAnswersView, ListQuestionsView, download_csv, execute_sql, index_page_view
+from .inference import Inference, InsertQuestion, SendTicket
+from .views import index_page_view, CSVUploadView, execute_sql, download_csv, ticket_details, all_tickets
 
 urlpatterns = [
     path("", index_page_view, name="index"),
     path("admin/", admin.site.urls),
-    path("answerList/", ListAnswersView.as_view(), name="answers"),
-    path("questionList/", ListQuestionsView.as_view(), name="questions"),
     path("inference/", Inference.as_view(), name="inference"),
+    path("insert_question/", InsertQuestion.as_view(), name="insert_question"),
     path("uploadCsv/", CSVUploadView.as_view(), name="upload-csv"),
     path("executeSql/", execute_sql, name="execute_sql"),
     path("download_csv/", download_csv, name="download_csv"),
+    path("ticket-details/<int:pk>/", ticket_details, name="ticket-details"),
+    path("send-ticket/", SendTicket.as_view(), name="send-ticket"),
+    path("all-tickets/", all_tickets, name="all-tickets"),
 ]
