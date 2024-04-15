@@ -18,3 +18,4 @@ __pycache__
 volumes
 devcontainer.json
 .devcontainer
+.ruff_cache
