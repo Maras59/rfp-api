@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .inference import Inference, InsertQuestion, SendTicket
+from .endpoints import Inference, InsertQuestion, SendTicket
 from .views import index_page_view, CSVUploadView, execute_sql, download_csv, ticket_details, all_tickets
 
 urlpatterns = [

@@ -35,7 +35,7 @@ class Inference(APIView):
         if not (question := payload.get("question")):
             return JsonResponse({"res": "No question found in the payload"})
 
-        return_count = int(payload.get("count", 2))
+        return_count = int(payload.get("count", 3))
         threshold = float(payload.get("threshold", 0.4))
 
         # get embeddings for the question
