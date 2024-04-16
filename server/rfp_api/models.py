@@ -2,6 +2,9 @@ import uuid
 
 from django.db import models
 from django.template.defaultfilters import truncatechars
+from pgvector.django import VectorField
+
+from .transformer import model
 
 CHAR_LENGTH = 50
 
@@ -28,10 +31,15 @@ class Question(models.Model):
     text = models.TextField()
     is_active = models.BooleanField(default=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
+    vector_embedding = VectorField(dimensions=768, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.id}: " + truncatechars(self.text, CHAR_LENGTH)
+
+    def save(self, *args, **kwargs):
+        self.vector_embedding = model.encode(self.text)
+        super(Question, self).save(*args, **kwargs)
 
 
 class Ticket(models.Model):

@@ -1,32 +1,22 @@
 from collections import defaultdict
 
-from django.db.models.signals import post_save, pre_delete, pre_save
-from django.dispatch import receiver
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from source.milvus_index import MilvusConnectionSecrets, MilvusService
+from numpy import dot
+from numpy.linalg import norm
 
 from .models import Answer, Organization, Question, Ticket
-
-credentials = MilvusConnectionSecrets(user="username", password="password", host="standalone")
-collection = MilvusService(credentials)
+from .transformer import model
 
 
-@receiver(pre_delete, sender=Question)
-def on_question_delete(sender, instance, **kwargs):
-    collection.drop_question(instance.id)
-
-
-@receiver(pre_save, sender=Question)
-def on_question_update(sender, instance, **kwargs):
-    if instance.pk and not instance._state.adding:  # If the primary key exists and not adding a new instance
-        collection.update_question(instance.id, instance.text)
-
-
-@receiver(post_save, sender=Question)
-def on_question_insert(sender, instance, created, **kwargs):
-    if created:
-        collection.insert_question(instance.id, instance.text)
+def cosine_similarity(a, b):
+    """
+    Function to calculate the cosine similarity between two vectors
+    :param a: The first vector
+    :param b: The second vector
+    :return: The cosine similarity between the two vectors
+    """
+    return dot(a, b) / (norm(a) * norm(b))
 
 
 class Inference(APIView):
@@ -48,17 +38,19 @@ class Inference(APIView):
         return_count = int(payload.get("count", 2))
         threshold = float(payload.get("threshold", 0.4))
 
-        query_results = collection.search(question, k=10, threshold=threshold)
+        # get embeddings for the question
+        question_embedding = model.encode(question)
 
-        # get nearest neighbor
+        # iterate over all questions and calculate cosine similarity
         classes = defaultdict(int)
         answer_metadata = defaultdict(lambda: (0, 0))
-        for item in query_results:
-            question = Question.objects.get(id=item.question_id)
-            classes[question.answer.id] += item.score
-            _, score = answer_metadata[question.answer.id]
-            if score < item.score:
-                answer_metadata[question.answer.id] = (question.id, item.score)
+        for question in Question.objects.all():
+            similarity = cosine_similarity(question.vector_embedding, question_embedding)
+            if similarity > threshold:
+                classes[question.answer.id] += similarity
+                _, score = answer_metadata[question.answer.id]
+                if score < similarity:
+                    answer_metadata[question.answer.id] = (question.id, similarity)
 
         # create list of tuples (score, class) and sort it
         sorted_classes = sorted(classes.items(), key=lambda x: x[1], reverse=True)

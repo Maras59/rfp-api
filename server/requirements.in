@@ -1,9 +1,10 @@
 django
 djangorestframework
 psycopg2-binary
+pgvector
 sqlparse
 asgiref
-pymilvus==2.3.6
 sentence-transformers
 cffi
 retry
+numpy
