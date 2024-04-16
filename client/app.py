@@ -31,8 +31,8 @@ with st.sidebar:
     st.title("Submit a Ticket to Product Owners")
     ticket_prompt = st.text_area("Enter details here:")
     if st.button("Submit Ticket"):
-        payload = {"description": st.session_state["question"]}
-        response = requests.post("http://django-web:8000/ticket/", json=payload)
+        payload = {"description": ticket_prompt}
+        response = requests.post("http://django-web:8000/send-ticket/", json=payload)
         response.raise_for_status()
         st.success("Ticket submitted successfully!")
 
@@ -51,6 +51,8 @@ if st.button("Submit"):
         st.write("No suitable answer found.")
         st.write("A ticket has been created for this question to be answered by product owners.")
         st.stop()
+    else:
+        st.success("Question submitted successfully! The results will appear below.")
 elif not results:
     st.stop()
 
@@ -80,6 +82,10 @@ for i, result in enumerate(results):
         st.write(result)
 
     if success_button:
+        response = requests.post(
+            "http://django-web:8000/insert_question/", json={"question_text": prompt, "answer_id": answer_id}
+        )
+        response.raise_for_status()
         st.success("Answer accepted! Your feedback will improve the system performance.")
 
     st.divider()
@@ -88,4 +94,7 @@ if st.button(
     ":red[Reject All Answers and Create Ticket]",
     help="Clicking this button will automatically create a ticket for the product owners to answer this question.",
 ):
+    payload = {"description": prompt, "auto_generated": True}
+    response = requests.post("http://django-web:8000/send-ticket/", json=payload)
+    response.raise_for_status()
     st.success("A ticket has been created for this question to be answered by product owners.")
