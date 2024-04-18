@@ -7,16 +7,18 @@ from django.db import ProgrammingError, connection
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import CreateTicketForm, SqlForm, UploadCSVForm
 from .models import Answer, Organization, Question, Ticket
+from django.contrib.auth.decorators import login_required
 
 
 def index_page_view(request):
     return render(request, "index.html")
 
 
-class CSVUploadView(View):
+class CSVUploadView(LoginRequiredMixin, View):
     def get(self, request):
         if not Organization.objects.exists():
             Organization.objects.create(name="Default Organization")
@@ -42,6 +44,7 @@ class CSVUploadView(View):
             return render(request, "upload.html", {"form": form, "message": "Form is not valid", "tone": "danger"})
 
 
+@login_required
 def execute_sql(request):
     form = SqlForm()
     results = []

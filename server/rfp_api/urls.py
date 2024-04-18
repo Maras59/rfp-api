@@ -23,6 +23,8 @@ from .views import index_page_view, CSVUploadView, execute_sql, download_csv, ti
 
 urlpatterns = [
     path("", index_page_view, name="index"),
+    path("accounts/login/", admin.site.login, name="login"),
+    path("accounts/logout/", admin.site.logout, name="logout"),
     path("admin/", admin.site.urls),
     path("inference/", Inference.as_view(), name="inference"),
     path("insert_question/", InsertQuestion.as_view(), name="insert_question"),
