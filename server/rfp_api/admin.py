@@ -45,4 +45,4 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("description", "date_created", "assigned_to", "is_resolved", "ticket_status")
+    list_display = ("description", "date_created", "auto_generated", "assigned_to", "is_resolved", "ticket_status")

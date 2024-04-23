@@ -117,6 +117,7 @@ class SendTicket(APIView):
         assigned_to_name = payload.get("assigned_to")
         answer_id = payload.get("answer_id")
         question_id = payload.get("question_id")
+        is_auto_generated = payload.get("auto_generated", False)
 
         assigned_org = Organization.objects.filter(name=assigned_to_name).first()
         if not assigned_org:
@@ -129,6 +130,7 @@ class SendTicket(APIView):
                 question_id=question_id,
                 answer_id=answer_id,
                 ticket_status="Pending",
+                auto_generated=is_auto_generated,
             )
             ticket.save()
 
